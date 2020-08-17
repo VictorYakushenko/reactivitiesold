@@ -34,7 +34,7 @@ class ActivityStore {
     try {
       const activities = await agent.Activities.list();
 
-      runInAction("load activities", () => {
+      runInAction("loading activities", () => {
         activities.forEach((activity) => {
           activity.date = activity.date.split(".")[0];
           this.activityRegistry.set(activity.id, activity);
@@ -45,7 +45,7 @@ class ActivityStore {
       runInAction("load activities error", () => {
         this.loadingInitial = false;
       });
-      console.log(error);
+      throw error;
     }
   };
 
@@ -85,9 +85,10 @@ class ActivityStore {
           this.activity = activity;
           this.loadingInitial = false;
         });
+        return activity;
       } catch (error) {
         runInAction("getting activity error", () => {
-          this.submitting = false;
+          this.loadingInitial = false;
         });
         console.log(error);
       }
